@@ -123,7 +123,7 @@ def coincidencias_por_semana(lista_teorica, lista_real):
 
         for r in reales:
             if inicio <= r <= holgura:
-                coincidencias.append(fin)
+                coincidencias.append(r)
                 match_encontrado = True
                 break
 
