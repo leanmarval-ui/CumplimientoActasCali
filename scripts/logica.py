@@ -108,8 +108,8 @@ def procesar_todo(df_proyectos, df_intermedia, df_semanal, fechas_mes):
         lambda x: calcular_posibles(x, fechas_mes)
     )
 
-    df_proyectos["ConteoIntermedia"] = df_proyectos["PosibleIntermedia"].apply(contar_fechas)
-    df_proyectos["ConteoSemanal"] = df_proyectos["PosibleSemanal"].apply(contar_fechas)
+    df_proyectos["ConteoIntermedia"] = df_proyectos["PosibleIntermedia"].apply(lambda x: contar_fechas(x) / 2)
+    df_proyectos["ConteoSemanal"] = df_proyectos["PosibleSemanal"].apply(lambda x: contar_fechas(x) / 2)
    
     # =========================
     # DETECTAR COLUMNA DE FECHA
