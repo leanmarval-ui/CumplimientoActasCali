@@ -45,7 +45,7 @@ def calcular_posibles(dia_base, fechas_mes):
     posibles = []
 
     for fecha in fechas_mes:
-    fecha = pd.to_datetime(fecha).normalize()  
+    fecha = pd.to_datetime(fecha).normalize()
 
     if fecha.weekday() == numero_dia:
         if fecha in festivos:
