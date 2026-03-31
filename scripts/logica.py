@@ -99,6 +99,11 @@ def coincidencias_inteligente(lista_teorica, lista_real):
 # =========================
 def procesar_todo(df_proyectos, df_intermedia, df_semanal, fechas_mes):
 
+    # 🔥 LIMPIAR NOMBRES (AQUÍ)
+    df_proyectos["Proyecto"] = df_proyectos["Proyecto"].apply(limpiar_texto)
+    df_intermedia["Proyecto"] = df_intermedia["Proyecto"].apply(limpiar_texto)
+    df_semanal["Proyecto"] = df_semanal["Proyecto"].apply(limpiar_texto)
+
     # CALENDARIO TEORICO
     df_proyectos["PosibleIntermedia"] = df_proyectos["DiaIntermedia"].apply(
         lambda x: calcular_posibles(x, fechas_mes)
