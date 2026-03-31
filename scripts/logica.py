@@ -87,7 +87,7 @@ def coincidencias_inteligente(lista_teorica, lista_real):
         for r in reales:
             if r in usadas:
                 continue
-            if r == t or r == t + pd.Timedelta(days=1):
+            if 0 <= (r - t).days <= 2:
                 coincidencias.append(t)
                 usadas.add(r)
                 break
