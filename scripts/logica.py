@@ -88,27 +88,46 @@ def contar_fechas_y_dividir(valor):
 # =========================
 # COINCIDENCIAS
 # =========================
-def coincidencias_inteligente(lista_teorica, lista_real):
+def coincidencias_por_semana(lista_teorica, lista_real):
     if pd.isna(lista_teorica) or pd.isna(lista_real):
         return ""
 
     teoricas = sorted(set(pd.to_datetime(x.strip()).normalize() for x in str(lista_teorica).split(",") if x.strip()))
     reales = sorted(set(pd.to_datetime(x.strip()).normalize() for x in str(lista_real).split(",") if x.strip()))
 
-    usadas = set()
     coincidencias = []
 
+    # 👇 agrupar teoricas por semana
+    semanas = {}
+
     for t in teoricas:
+        year, week, _ = t.isocalendar()
+        clave = (year, week)
+
+        if clave not in semanas:
+            semanas[clave] = []
+
+        semanas[clave].append(t)
+
+    # 👇 NUEVA LÓGICA (AQUÍ VA LO TUYO BIEN INDENTADO)
+    for semana, fechas_teoricas in semanas.items():
+
+        match_encontrado = False
+
+        fechas_teoricas = sorted(fechas_teoricas)
+
+        inicio = fechas_teoricas[0]
+        fin = fechas_teoricas[-1]
+
+        holgura = siguiente_habil(fin)
+
         for r in reales:
-            if r in usadas:
-                continue
-            if 0 <= (r - t).days <= 2:
-                coincidencias.append(t)
-                usadas.add(r)
+            if inicio <= r <= holgura:
+                coincidencias.append(fin)
+                match_encontrado = True
                 break
 
     return ", ".join([f.strftime("%Y-%m-%d") for f in coincidencias])
-
 # =========================
 # PROCESO PRINCIPAL
 # =========================
@@ -178,13 +197,14 @@ def procesar_todo(df_proyectos, df_intermedia, df_semanal, fechas_mes):
 
     # COINCIDENCIAS
     df_detallado["CoincidenciasIntermedia"] = df_detallado.apply(
-        lambda row: coincidencias_inteligente(row["PosibleIntermedia"], row["RealIntermedia"]), axis=1
+    lambda row: coincidencias_por_semana(row["PosibleIntermedia"], row["RealIntermedia"]), axis=1
     )
 
     df_detallado["CoincidenciasSemanal"] = df_detallado.apply(
-        lambda row: coincidencias_inteligente(row["PosibleSemanal"], row["RealSemanal"]), axis=1
+    lambda row: coincidencias_por_semana(row["PosibleSemanal"], row["RealSemanal"]), axis=1
     )
 
+    # CONTEOS
     df_detallado["ConteoCoincidenciasIntermedia"] = df_detallado["CoincidenciasIntermedia"].apply(contar_fechas)
     df_detallado["ConteoCoincidenciasSemanal"] = df_detallado["CoincidenciasSemanal"].apply(contar_fechas)
 
