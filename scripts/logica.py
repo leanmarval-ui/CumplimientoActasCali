@@ -45,14 +45,16 @@ def calcular_posibles(dia_base, fechas_mes):
     posibles = []
 
     for fecha in fechas_mes:
-        if fecha.weekday() == numero_dia:
-            if fecha in festivos:
-                posibles.extend(obtener_dos_siguientes(fecha))
-            else:
-                posibles.append(fecha)
-                siguiente = siguiente_habil(fecha)
-                if siguiente.month == MES:
-                    posibles.append(siguiente)
+    fecha = pd.to_datetime(fecha).normalize()  
+
+    if fecha.weekday() == numero_dia:
+        if fecha in festivos:
+            posibles.extend(obtener_dos_siguientes(fecha))
+        else:
+            posibles.append(fecha)
+            siguiente = siguiente_habil(fecha)
+            if siguiente.month == MES:
+                posibles.append(siguiente)
 
     posibles = sorted(set(posibles))
     return ", ".join([f.strftime("%Y-%m-%d") for f in posibles])
